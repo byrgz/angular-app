@@ -1,0 +1,83 @@
+<div class="panel-layout">
+  
+  <!-- TABLA DE PRODUCTOS (Izquierda) -->
+  <div class="crud-container">
+    <h2>Operaciones CRUD</h2>
+
+    <table class="tabla-productos">
+      <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Título</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (prod of productos(); track $index) {
+          <tr>
+            <td>
+              <img [src]="$any(prod).image" [alt]="$any(prod).title" class="miniatura" />
+            </td>
+            <td>{{ $any(prod).title }}</td>
+            <td>{{ $any(prod).category }}</td>
+            <td class="acciones">
+              <button class="btn btn-borrar" (click)="borrarProducto($any(prod).id)">Borrar</button>
+              <button class="btn btn-actualizar" (click)="actualizarProducto(prod)">Actualizar</button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="sin-datos">Cargando o sin productos...</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FORMULARIO NUEVO-->
+  <div class="form-container">
+    <h2>{{ editingId() === null ? 'Nuevo producto' : 'Editar producto #' + editingId() }}</h2>
+
+    <form (ngSubmit)="save()" class="styled-form">
+      <div class="form-group">
+        <label for="title">Título</label>
+        <input id="title" name="title" class="form-control-custom" [(ngModel)]="form.title" placeholder="Ej. Camisa casual" required />
+      </div>
+
+      <div class="form-group">
+        <label for="price">Precio ($)</label>
+        <input id="price" name="price" type="number" min="0" step="0.01" class="form-control-custom"
+          [(ngModel)]="form.price" placeholder="0.00" required />
+      </div>
+
+      <div class="form-group">
+        <label for="category">Categoría</label>
+        <select id="category" name="category" class="form-control-custom" [(ngModel)]="form.category" required>
+          <option value="">Selecciona una categoría</option>
+          @for (category of categories(); track category) {
+            <option [value]="category">{{ category }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="image">URL de la imagen</label>
+        <input id="image" name="image" type="url" class="form-control-custom" [(ngModel)]="form.image" placeholder="https://..." required />
+      </div>
+
+      <div class="form-group">
+        <label for="description">Descripción</label>
+        <textarea id="description" name="description" rows="3" class="form-control-custom"
+          [value]="form.description" (input)="form.description = $any($event.target).value" placeholder="Detalles del producto..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-guardar">Guardar</button>
+
+      @if (editingId() !== null) {
+        <button type="button" class="btn-cancelar" (click)="cancel()">Cancelar</button>
+      }
+    </form>
+  </div>
+
+</div>
